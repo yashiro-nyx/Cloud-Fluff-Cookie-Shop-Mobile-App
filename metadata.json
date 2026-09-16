@@ -1,0 +1,6 @@
+{
+  "name": "Cloud Fluffs - Cookie Shop Mobile App",
+  "description": "An Ionic-styled mobile ecommerce cookie shop application featuring side menu navigation, custom cookie builder, product catalog, cart, community gallery, order tracking, and team credits.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
