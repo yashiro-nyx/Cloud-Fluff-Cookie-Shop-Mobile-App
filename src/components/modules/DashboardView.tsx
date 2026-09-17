@@ -47,57 +47,57 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
   return (
     <div className="space-y-4 pb-12">
-      {/* 1. HERO BANNER CARD (From Video Screenshot, Pink Dominant with Warm Cocoa) */}
+      {/* 1. HERO BANNER CARD (Pink Dominant with Warm Cocoa) */}
       <section
         id="dashboard-hero-banner"
-        className="p-5 rounded-[32px] bg-gradient-to-br from-[#fce7f3] via-[#fdf2f8] to-[#fad2e1] border-2 border-[#fbcfe8] relative overflow-hidden shadow-2xs"
+        className="p-5 sm:p-6 rounded-[32px] bg-gradient-to-br from-[#fce7f3] via-[#fdf2f8] to-[#fad2e1] border-2 border-[#fbcfe8] relative overflow-hidden shadow-xs"
       >
         {/* Decorative Floating Sprinkles / Sparkle elements */}
-        <div className="absolute -top-6 -right-6 w-32 h-32 bg-[#f472b6]/20 rounded-full blur-2xl pointer-events-none" />
+        <div className="absolute -top-6 -right-6 w-36 h-36 bg-[#f472b6]/20 rounded-full blur-2xl pointer-events-none" />
 
-        <div className="relative z-10 flex items-start justify-between gap-2">
-          <div className="space-y-2 max-w-[220px]">
+        <div className="relative z-10 flex items-center justify-between gap-3">
+          <div className="space-y-2 flex-1 min-w-0">
             {/* Pill: Freshly Baked Daily */}
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-[#fbcfe8] text-[10px] font-extrabold uppercase tracking-wider text-[#be185d] shadow-2xs">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/95 border border-[#fbcfe8] text-[10px] font-extrabold uppercase tracking-wider text-[#be185d] shadow-2xs">
               <Sparkles className="w-3 h-3 text-[#ec4899]" />
               <span>Freshly Baked Daily</span>
             </div>
 
             {/* Headline */}
-            <h2 className="text-2xl font-serif font-bold text-[#4a3024] leading-tight">
+            <h2 className="text-xl sm:text-2xl font-serif font-bold text-[#4a3024] leading-tight">
               Craving Warm,
               <br />
               Gooey Cookies?
             </h2>
 
             {/* Subhead */}
-            <p className="text-[11px] text-[#74513e] leading-relaxed">
+            <p className="text-[11px] text-[#74513e] leading-relaxed max-w-xs">
               Custom-bake your dream cookie or choose from our signature artisan lineup.
             </p>
 
-            {/* Two Action Buttons from Video */}
-            <div className="flex items-center gap-2 pt-2">
+            {/* Standardized Action Buttons */}
+            <div className="flex items-center gap-2 pt-1.5 flex-wrap">
               <button
                 id="btn-hero-build-cookie"
                 onClick={() => onNavigate('cookie-builder')}
-                className="h-9 px-3.5 rounded-full bg-[#523628] hover:bg-[#684635] text-[#fff5f7] text-[11px] font-bold transition-all shadow-xs flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                className="btn-pill-primary h-10 px-4 text-xs shadow-xs"
               >
                 <span>Build My Cookie</span>
-                <ArrowRight className="w-3 h-3 text-[#fbcfe8]" />
+                <ArrowRight className="w-3.5 h-3.5 text-[#fbcfe8]" />
               </button>
 
               <button
                 id="btn-hero-catalog"
                 onClick={() => onNavigate('products')}
-                className="h-9 px-3 rounded-full bg-white hover:bg-[#fce7f3] text-[#523628] border border-[#fbcfe8] text-[11px] font-bold transition-all shadow-2xs active:scale-95 cursor-pointer"
+                className="btn-pill-secondary h-10 px-4 text-xs shadow-2xs"
               >
                 <span>Catalog</span>
               </button>
             </div>
           </div>
 
-          {/* Right Hero Cookie Illustration from Video Screenshot (Cookie with white/pink heart frosting & choco chips) */}
-          <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 mt-2 flex items-center justify-center">
+          {/* Right Hero Cookie Illustration */}
+          <div className="relative shrink-0 w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center">
             {/* Outer Orbiting Choco Chips & Sprinkles */}
             <div className="absolute inset-0 rounded-full border border-dashed border-[#ec4899]/30 animate-[spin_20s_linear_infinite]" />
             <span className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-[#523628]" />
@@ -106,16 +106,13 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <span className="absolute bottom-3 left-3 w-1.5 h-1.5 rounded-full bg-[#f472b6]" />
 
             {/* Center Cookie Body */}
-            <div className="w-20 h-20 rounded-full bg-[#74513e] p-1.5 shadow-md flex items-center justify-center border-2 border-[#523628]/20 relative overflow-hidden">
-              {/* Crumb Texture */}
+            <div className="w-20 h-20 sm:w-22 sm:h-22 rounded-full bg-[#74513e] p-1.5 shadow-md flex items-center justify-center border-2 border-[#523628]/20 relative overflow-hidden">
               <div className="w-full h-full rounded-full bg-gradient-to-br from-[#8c6450] to-[#523628] flex items-center justify-center relative">
-                {/* Floating Choco Chips */}
                 <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-[#3b2419]" />
                 <div className="absolute bottom-2 right-2.5 w-2.5 h-2.5 rounded-full bg-[#3b2419]" />
                 <div className="absolute top-3 right-2 w-1.5 h-1.5 rounded-full bg-[#3b2419]" />
                 <div className="absolute bottom-3.5 left-3 w-2 h-2 rounded-full bg-[#3b2419]" />
 
-                {/* Center White / Soft Pink Heart Frosting */}
                 <div className="w-9 h-9 rounded-full bg-white/95 shadow-inner flex items-center justify-center">
                   <Heart className="w-5 h-5 fill-[#fce7f3] text-[#ec4899]" />
                 </div>
@@ -125,21 +122,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       </section>
 
-      {/* 2. ACTIVE DELIVERY CARD (From Video Screenshot) */}
+      {/* 2. ACTIVE DELIVERY CARD */}
       <section
         id="card-active-delivery"
         onClick={() => onNavigate('orders')}
-        className="p-3.5 rounded-2xl bg-gradient-to-r from-[#fce7f3] via-[#fff0f4] to-[#fce7f3] border border-[#fbcfe8] flex items-center justify-between gap-3 shadow-2xs hover:shadow-xs transition-all cursor-pointer group"
+        className="p-3.5 rounded-3xl bg-gradient-to-r from-[#fce7f3] via-[#fff0f4] to-[#fce7f3] border border-[#fbcfe8] flex items-center justify-between gap-3 shadow-2xs hover:shadow-xs transition-all cursor-pointer group"
       >
-        <div className="flex items-center gap-3 min-w-0">
-          {/* Rounded Brown Square with Truck Icon */}
-          <div className="w-10 h-10 rounded-xl bg-[#523628] text-[#fff5f7] flex items-center justify-center shrink-0 shadow-2xs">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="w-10 h-10 rounded-2xl bg-[#523628] text-[#fff5f7] flex items-center justify-center shrink-0 shadow-2xs">
             <Truck className="w-5 h-5 text-[#fbcfe8]" />
           </div>
 
-          <div className="truncate">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-extrabold text-[#4a3024]">
+              <span className="text-xs font-extrabold text-[#4a3024] truncate">
                 {activeOrder ? `Order #${activeOrder.orderId}` : 'Order #CF-8041'}
               </span>
               <span className="text-[9px] px-2 py-0.5 rounded-full bg-[#523628] text-[#fff5f7] font-bold shrink-0">
@@ -148,7 +144,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             </div>
             <p className="text-[11px] text-[#74513e] mt-0.5 flex items-center gap-1 truncate">
               <Clock className="w-3 h-3 text-[#ec4899] shrink-0" />
-              <span>Arriving in ~14 mins at TIP Cubao</span>
+              <span className="truncate">Arriving in ~14 mins at TIP Cubao</span>
             </p>
           </div>
         </div>
@@ -156,12 +152,11 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         <ChevronRight className="w-4 h-4 text-[#74513e] group-hover:translate-x-0.5 transition-transform shrink-0" />
       </section>
 
-      {/* 3. THREE STAT CHIPS (From Video Screenshot) */}
+      {/* 3. THREE STAT CHIPS */}
       <section className="grid grid-cols-3 gap-2">
-        {/* Stat 1: 420 Fluff Points */}
         <div
           onClick={() => onNavigate('loyalty')}
-          className="p-3 rounded-2xl bg-white border border-[#fbcfe8] text-center space-y-1 shadow-2xs hover:border-[#f472b6] transition cursor-pointer"
+          className="p-3 rounded-2xl bg-white border border-[#fbcfe8] text-center space-y-1 shadow-2xs hover:border-[#f472b6] hover:-translate-y-0.5 transition cursor-pointer"
         >
           <div className="w-8 h-8 rounded-full bg-[#fce7f3] text-[#ec4899] mx-auto flex items-center justify-center">
             <Award className="w-4 h-4" />
@@ -170,10 +165,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <p className="text-[10px] text-[#74513e] font-medium leading-none">Fluff Points</p>
         </div>
 
-        {/* Stat 2: 8 House Recipes */}
         <div
           onClick={() => onNavigate('products')}
-          className="p-3 rounded-2xl bg-white border border-[#fbcfe8] text-center space-y-1 shadow-2xs hover:border-[#f472b6] transition cursor-pointer"
+          className="p-3 rounded-2xl bg-white border border-[#fbcfe8] text-center space-y-1 shadow-2xs hover:border-[#f472b6] hover:-translate-y-0.5 transition cursor-pointer"
         >
           <div className="w-8 h-8 rounded-full bg-[#fef3c7] text-[#b45309] mx-auto flex items-center justify-center">
             <CookieIcon className="w-4 h-4" />
@@ -182,10 +176,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           <p className="text-[10px] text-[#74513e] font-medium leading-none">Recipes</p>
         </div>
 
-        {/* Stat 3: 20+ Mix-Ins */}
         <div
           onClick={() => onNavigate('cookie-builder')}
-          className="p-3 rounded-2xl bg-white border border-[#fbcfe8] text-center space-y-1 shadow-2xs hover:border-[#f472b6] transition cursor-pointer"
+          className="p-3 rounded-2xl bg-white border border-[#fbcfe8] text-center space-y-1 shadow-2xs hover:border-[#f472b6] hover:-translate-y-0.5 transition cursor-pointer"
         >
           <div className="w-8 h-8 rounded-full bg-[#f3e8ff] text-[#7e22ce] mx-auto flex items-center justify-center">
             <Sparkles className="w-4 h-4" />
@@ -195,7 +188,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
       </section>
 
-      {/* 4. POPULAR HOUSE COOKIES (From Video Screenshot) */}
+      {/* 4. POPULAR HOUSE COOKIES */}
       <section className="space-y-3 pt-1">
         <div className="flex items-center justify-between">
           <div>
@@ -215,55 +208,56 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
           </button>
         </div>
 
-        {/* Horizontal Scrolling Cards matching Video layout */}
+        {/* Horizontal Scrolling Cards */}
         <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 pt-1 -mx-1 px-1">
           {popularHouseCookies.map((cookie, idx) => (
             <div
               key={cookie.id}
-              className="w-48 shrink-0 rounded-3xl bg-white border border-[#fbcfe8] overflow-hidden shadow-2xs hover:shadow-md transition-all group flex flex-col justify-between"
+              className="w-52 shrink-0 rounded-3xl bg-white border border-[#fbcfe8] overflow-hidden shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all group flex flex-col justify-between"
             >
               {/* Cookie Image with Badges */}
-              <div className="relative h-32 w-full bg-[#fce7f3] overflow-hidden">
+              <div className="relative h-36 w-full bg-[#fce7f3] overflow-hidden">
                 <img
                   src={cookie.imageUrl}
                   alt={cookie.name}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
                 />
 
                 {/* Top Badge: Best Seller / Logo Star / House Classic */}
                 <div className="absolute top-2 left-2">
-                  <span className="text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-[#523628]/90 backdrop-blur-xs text-[#fff5f7] shadow-xs">
+                  <span className="text-[9px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#523628]/90 backdrop-blur-xs text-[#fff5f7] shadow-xs">
                     {idx === 0 ? 'Best Seller' : idx === 1 ? 'Logo Star' : cookie.badge || 'Popular'}
                   </span>
                 </div>
 
-                {/* Price Pill in Bottom-Right of photo (from video) */}
+                {/* Price Pill in Bottom-Right of photo */}
                 <div className="absolute bottom-2 right-2">
-                  <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-[#fef3c7] text-[#523628] border border-[#fde68a] shadow-xs">
+                  <span className="text-xs font-extrabold px-2.5 py-0.5 rounded-full bg-white/95 text-[#523628] border border-[#fbcfe8] shadow-xs">
                     ₱{cookie.price}
                   </span>
                 </div>
               </div>
 
               {/* Card Body */}
-              <div className="p-3 space-y-1 flex-1 flex flex-col justify-between">
+              <div className="p-3.5 space-y-1.5 flex-1 flex flex-col justify-between">
                 <div>
-                  <h4 className="text-xs font-bold text-[#4a3024] truncate">{cookie.name}</h4>
-                  <p className="text-[10px] text-[#74513e] line-clamp-1">
+                  <h4 className="text-xs font-bold text-[#4a3024] truncate leading-tight">{cookie.name}</h4>
+                  <p className="text-[10px] text-[#74513e] line-clamp-1 mt-0.5">
                     {cookie.flavorNotes || cookie.tagline}
                   </p>
                 </div>
 
-                <div className="pt-2 flex items-center justify-between">
+                <div className="pt-2 flex items-center justify-between border-t border-[#fce7f3]">
                   <span className="text-[10px] text-[#be185d] font-bold">
                     ⭐ {cookie.rating}
                   </span>
 
                   <button
                     onClick={() => onAddToCart(cookie)}
-                    className="h-7 px-2.5 rounded-full bg-[#fce7f3] hover:bg-[#523628] text-[#523628] hover:text-[#fff5f7] border border-[#fbcfe8] text-[10px] font-bold transition-all flex items-center gap-1 active:scale-95 cursor-pointer"
+                    className="h-8 px-3 rounded-full bg-[#fce7f3] hover:bg-[#523628] text-[#523628] hover:text-[#fff5f7] border border-[#fbcfe8] text-xs font-bold transition-all flex items-center gap-1 active:scale-95 cursor-pointer shadow-2xs"
                   >
-                    <Plus className="w-3 h-3" />
+                    <Plus className="w-3.5 h-3.5" />
                     <span>Add</span>
                   </button>
                 </div>

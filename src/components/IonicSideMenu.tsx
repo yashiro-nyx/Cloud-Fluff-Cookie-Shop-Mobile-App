@@ -32,6 +32,8 @@ import {
   Settings,
   Heart,
   HelpCircle,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
 import { PageId } from '../types';
 import { CookieLogo } from './CookieLogo';
@@ -47,6 +49,10 @@ interface IonicSideMenuProps {
   fluffPoints?: number;
   onOpenTasteQuiz?: () => void;
   onOpenRecordingGuide?: () => void;
+  isLoggedIn?: boolean;
+  currentUser?: { name: string; email: string; tier: string; initials: string } | null;
+  onLoginClick?: () => void;
+  onLogoutClick?: () => void;
 }
 
 interface MenuItemConfig {
@@ -68,6 +74,10 @@ export const IonicSideMenu: React.FC<IonicSideMenuProps> = ({
   activeOrderCount = 0,
   fluffPoints = 420,
   onOpenTasteQuiz,
+  isLoggedIn,
+  currentUser,
+  onLoginClick,
+  onLogoutClick,
 }) => {
   const handleSelect = (page: PageId) => {
     if (onSelectPage) {
@@ -250,20 +260,25 @@ export const IonicSideMenu: React.FC<IonicSideMenuProps> = ({
   );
 
   return (
-    <>
+    <div
+      id="ionic-side-menu-container"
+      className={`fixed sm:absolute inset-0 z-50 transition-all duration-300 ${
+        isOpen ? 'pointer-events-auto visible' : 'pointer-events-none invisible'
+      }`}
+    >
       {/* Backdrop for Ionic Drawer */}
       <div
         id="side-menu-backdrop"
         onClick={onClose}
-        className={`absolute inset-0 bg-black/40 z-40 transition-opacity duration-300 backdrop-blur-[2px] ${
-          isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        className={`absolute inset-0 bg-black/40 transition-opacity duration-300 backdrop-blur-[2px] ${
+          isOpen ? 'opacity-100' : 'opacity-0'
         }`}
       />
 
       {/* Slide-over Ionic Menu Panel */}
       <aside
         id="ionic-side-menu-drawer"
-        className={`absolute top-0 left-0 bottom-0 w-[84%] max-w-[320px] bg-[#fff5f7] text-[#4a3024] z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-out border-r border-[#fbcfe8] ${
+        className={`absolute top-0 left-0 bottom-0 w-[84%] max-w-[320px] bg-[#fff5f7] text-[#4a3024] shadow-2xl flex flex-col transition-transform duration-300 ease-out border-r border-[#fbcfe8] ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -322,32 +337,63 @@ export const IonicSideMenu: React.FC<IonicSideMenuProps> = ({
           </div>
         </div>
 
-        {/* ion-footer: User Profile Card (Clickable to open profile) */}
-        <button
-          id="btn-side-menu-user-profile"
-          onClick={() => handleSelect('profile')}
-          className="p-3.5 bg-white/90 border-t border-[#fbcfe8] flex items-center justify-between hover:bg-[#fce7f3] transition-colors cursor-pointer text-left w-full"
-        >
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-full bg-[#fce7f3] border border-[#fbcfe8] text-[#523628] font-bold text-xs flex items-center justify-center">
-              JR
-            </div>
-            <div className="leading-tight">
-              <p className="text-xs font-bold text-[#4a3024] flex items-center gap-1">
-                <span>Jervin Paul R.</span>
-                <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#ec4899] text-white font-extrabold">
-                  VIP
-                </span>
-              </p>
-              <p className="text-[10px] text-[#74513e]">Manage Account & Settings</p>
-            </div>
-          </div>
+        {/* ion-footer: User Profile Card & Auth Actions */}
+        <div className="p-3 bg-white/95 border-t border-[#fbcfe8] flex items-center justify-between gap-2 shrink-0">
+          {isLoggedIn ? (
+            <>
+              <button
+                id="btn-side-menu-user-profile"
+                onClick={() => handleSelect('profile')}
+                className="flex items-center gap-2.5 flex-1 min-w-0 text-left hover:opacity-80 transition cursor-pointer"
+              >
+                <div className="w-9 h-9 rounded-full bg-[#fce7f3] border border-[#fbcfe8] text-[#523628] font-bold text-xs flex items-center justify-center shrink-0">
+                  {currentUser?.initials || 'JP'}
+                </div>
+                <div className="leading-tight min-w-0">
+                  <p className="text-xs font-bold text-[#4a3024] truncate flex items-center gap-1">
+                    <span>{currentUser?.name || 'Jervin Paul R.'}</span>
+                    <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#ec4899] text-white font-extrabold shrink-0">
+                      {currentUser?.tier || 'VIP'}
+                    </span>
+                  </p>
+                  <p className="text-[10px] text-[#74513e] truncate">{fluffPoints} Fluff Points</p>
+                </div>
+              </button>
 
-          <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-[#fce7f3] text-[#523628] border border-[#fbcfe8]">
-            {fluffPoints} pts
-          </span>
-        </button>
+              <button
+                id="btn-side-menu-logout"
+                onClick={() => {
+                  onClose();
+                  onLogoutClick?.();
+                }}
+                className="p-2 rounded-xl text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition cursor-pointer shrink-0"
+                title="Log Out"
+                aria-label="Log Out"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </>
+          ) : (
+            <div className="w-full flex items-center justify-between gap-2">
+              <div className="leading-tight min-w-0">
+                <p className="text-xs font-bold text-[#4a3024]">Guest Baker</p>
+                <p className="text-[10px] text-[#74513e]">Sign in for rewards</p>
+              </div>
+              <button
+                id="btn-side-menu-login"
+                onClick={() => {
+                  onClose();
+                  onLoginClick?.();
+                }}
+                className="py-1.5 px-3 rounded-full bg-[#523628] text-white hover:bg-[#684635] text-xs font-bold transition flex items-center gap-1.5 cursor-pointer shadow-2xs"
+              >
+                <LogIn className="w-3.5 h-3.5 text-[#fbcfe8]" />
+                <span>Log In</span>
+              </button>
+            </div>
+          )}
+        </div>
       </aside>
-    </>
+    </div>
   );
 };

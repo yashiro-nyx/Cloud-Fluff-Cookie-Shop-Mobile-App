@@ -35,6 +35,7 @@ import { TasteQuizModal } from './components/modules/TasteQuizModal';
 import { UserProfileView } from './components/modules/UserProfileView';
 import { FavoritesView } from './components/modules/FavoritesView';
 import { HelpSupportView } from './components/modules/HelpSupportView';
+import { AuthModal } from './components/modules/AuthModal';
 
 export default function App() {
   // Navigation State
@@ -81,6 +82,30 @@ export default function App() {
   const [isTasteQuizOpen, setIsTasteQuizOpen] = useState(false);
   const [isRecordingGuideOpen, setIsRecordingGuideOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // Authentication State (defaults to active user session, customizable & toggleable)
+  const [currentUser, setCurrentUser] = useState<{
+    name: string;
+    email: string;
+    tier: string;
+    initials: string;
+  } | null>({
+    name: 'Jervin Paul R.',
+    email: 'jervinpaulromualdo@gmail.com',
+    tier: 'VIP',
+    initials: 'JP',
+  });
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const handleLoginSuccess = (user: { name: string; email: string; tier: string; initials: string }) => {
+    setCurrentUser(user);
+    showToast(`Welcome back, ${user.name}!`);
+  };
+
+  const handleLogout = () => {
+    setCurrentUser(null);
+    showToast('Signed out of Cookie Fluffs.');
+  };
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -245,40 +270,48 @@ export default function App() {
   return (
     <IonApp className="font-sans antialiased bg-[#fae8eb]">
       <IonicLayout
-      activePage={activePage}
-      onNavigate={(page) => {
-        setActivePage(page);
-        setIsMenuOpen(false);
-      }}
-      onToggleMenu={() => setIsMenuOpen(!isMenuOpen)}
-      cartCount={totalCartCount}
-    >
-      {/* Ionic Side Menu Drawer */}
-      <IonicSideMenu
-        isOpen={isMenuOpen}
         activePage={activePage}
-        onSelectPage={(page) => {
-          setActivePage(page);
-          setIsMenuOpen(false);
-        }}
         onNavigate={(page) => {
           setActivePage(page);
           setIsMenuOpen(false);
         }}
-        onClose={() => setIsMenuOpen(false)}
+        onToggleMenu={() => setIsMenuOpen(!isMenuOpen)}
         cartCount={totalCartCount}
-        activeOrderCount={activeOrder && activeOrder.status !== 'delivered' ? 1 : 0}
-        fluffPoints={tasteProfile.fluffPoints}
-        onOpenTasteQuiz={() => setIsTasteQuizOpen(true)}
-      />
-
-      {/* Floating Interactive Toast Feedback */}
-      {toastMessage && (
-        <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-[#523628] text-[#fff5f7] text-xs font-bold shadow-lg border border-[#fbcfe8]/40 flex items-center gap-2 animate-fadeIn pointer-events-none max-w-xs text-center">
-          <span>🍪</span>
-          <span>{toastMessage}</span>
-        </div>
-      )}
+        isLoggedIn={!!currentUser}
+        currentUser={currentUser}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onLogout={handleLogout}
+        sideMenu={
+          <IonicSideMenu
+            isOpen={isMenuOpen}
+            activePage={activePage}
+            onSelectPage={(page) => {
+              setActivePage(page);
+              setIsMenuOpen(false);
+            }}
+            onNavigate={(page) => {
+              setActivePage(page);
+              setIsMenuOpen(false);
+            }}
+            onClose={() => setIsMenuOpen(false)}
+            cartCount={totalCartCount}
+            activeOrderCount={activeOrder && activeOrder.status !== 'delivered' ? 1 : 0}
+            fluffPoints={tasteProfile.fluffPoints}
+            onOpenTasteQuiz={() => setIsTasteQuizOpen(true)}
+            isLoggedIn={!!currentUser}
+            currentUser={currentUser}
+            onLoginClick={() => setIsAuthModalOpen(true)}
+            onLogoutClick={handleLogout}
+          />
+        }
+      >
+        {/* Floating Interactive Toast Feedback */}
+        {toastMessage && (
+          <div className="fixed top-14 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-[#523628] text-[#fff5f7] text-xs font-bold shadow-lg border border-[#fbcfe8]/40 flex items-center gap-2 animate-fadeIn pointer-events-none max-w-xs text-center">
+            <span>🍪</span>
+            <span>{toastMessage}</span>
+          </div>
+        )}
 
       {/* Active Module View Rendering */}
       {activePage === 'dashboard' && (
@@ -399,6 +432,16 @@ export default function App() {
           setTasteProfile(prof);
           showToast('Updated your personal Taste Profile!');
         }}
+      />
+
+      {/* Dedicated Authentication Modal (Login / Sign Up / Switch Account) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLoginSuccess={handleLoginSuccess}
+        isCurrentlyLoggedIn={!!currentUser}
+        currentUserName={currentUser?.name}
+        onLogout={handleLogout}
       />
       </IonicLayout>
     </IonApp>

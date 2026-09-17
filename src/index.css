@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@theme {
+  --radius-full: 9999px;
+}
+
+.rounded-full {
+  border-radius: 9999px !important;
+}
+
 @layer base {
   :root {
     /* Warm, rich roasted cocoa (NOT pitch black) */
@@ -40,7 +48,8 @@
 /* Button & Pill alignment utility classes */
 .btn-pill-primary {
   height: 42px;
-  padding: 0 20px;
+  min-height: 42px;
+  padding: 0 18px;
   border-radius: 9999px;
   background-color: #523628;
   color: #fff5f7;
@@ -52,19 +61,21 @@
   gap: 6px;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 2px 8px -2px rgba(82, 54, 40, 0.2);
+  cursor: pointer;
 }
 .btn-pill-primary:hover {
   background-color: #684635;
-  transform: translateY(-1px) scale(1.02);
+  transform: translateY(-1px);
   box-shadow: 0 6px 14px -2px rgba(82, 54, 40, 0.25);
 }
 .btn-pill-primary:active {
   transform: scale(0.96);
 }
 
-.btn-pill-pink {
+.btn-pill-pink, .btn-pill-secondary {
   height: 42px;
-  padding: 0 20px;
+  min-height: 42px;
+  padding: 0 18px;
   border-radius: 9999px;
   background-color: #fce7f3;
   color: #4a3024;
@@ -76,14 +87,97 @@
   justify-content: center;
   gap: 6px;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
 }
-.btn-pill-pink:hover {
+.btn-pill-pink:hover, .btn-pill-secondary:hover {
   background-color: #fbcfe8;
   border-color: #f472b6;
-  transform: translateY(-1px) scale(1.02);
+  transform: translateY(-1px);
 }
-.btn-pill-pink:active {
+.btn-pill-pink:active, .btn-pill-secondary:active {
   transform: scale(0.96);
+}
+
+.btn-pill-outline {
+  height: 42px;
+  min-height: 42px;
+  padding: 0 18px;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  color: #4a3024;
+  border: 1px solid #fbcfe8;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+.btn-pill-outline:hover {
+  background-color: #fff5f7;
+  border-color: #f472b6;
+  transform: translateY(-1px);
+}
+.btn-pill-outline:active {
+  transform: scale(0.96);
+}
+
+/* Modern Card & Shadow Styling */
+.modern-card {
+  background: #ffffff;
+  border: 1px solid #fce7f3;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 10px -2px rgba(74, 48, 36, 0.05);
+  transition: all 0.2s ease;
+}
+.modern-card:hover {
+  box-shadow: 0 6px 18px -4px rgba(74, 48, 36, 0.08);
+  border-color: #fbcfe8;
+}
+
+/* Ionic Layout & Toolbar Overrides to guarantee perfect responsiveness and zero overlapping */
+ion-page#main-content {
+  position: relative !important;
+  contain: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+ion-header {
+  position: relative !important;
+  width: 100% !important;
+  flex-shrink: 0 !important;
+  z-index: 20 !important;
+}
+
+ion-toolbar {
+  --background: transparent;
+  --border-color: transparent;
+  --min-height: 56px;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+}
+
+ion-content#ion-content-scroll {
+  flex: 1 1 0% !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  position: relative !important;
+  display: block !important;
+  --background: #fff5f7;
+  --color: #4a3024;
+}
+
+ion-content {
+  --background: #fff5f7;
+  --color: #4a3024;
 }
 
 /* Ionic style pulse & ripple effects */

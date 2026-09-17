@@ -48,14 +48,22 @@ export const ProductCatalogView: React.FC<ProductCatalogViewProps> = ({
   const [selectedMood, setSelectedMood] = useState<AIMood>('all');
   const [expandedSensoryId, setExpandedSensoryId] = useState<string | null>(null);
 
-  const categories: { id: CookieCategory; label: string }[] = [
-    { id: 'all', label: 'All Cookies' },
-    { id: 'indulgent', label: 'Indulgent' },
-    { id: 'fruity', label: 'Fruity & Pink' },
-    { id: 'classic', label: 'Classic' },
-    { id: 'nutty', label: 'Nutty & Caramel' },
-    { id: 'dietary', label: 'Dietary' },
+  const categories: { id: CookieCategory; label: string; icon: string }[] = [
+    { id: 'all', label: 'All Cookies', icon: '🍪' },
+    { id: 'indulgent', label: 'Indulgent', icon: '🍫' },
+    { id: 'fruity', label: 'Fruity & Pink', icon: '🍓' },
+    { id: 'classic', label: 'Classic', icon: '✨' },
+    { id: 'nutty', label: 'Nutty & Caramel', icon: '🥜' },
+    { id: 'dietary', label: 'Dietary', icon: '🌱' },
   ];
+
+  const categoryCounts = useMemo(() => {
+    const counts: Record<string, number> = { all: products.length };
+    products.forEach((p) => {
+      counts[p.category] = (counts[p.category] || 0) + 1;
+    });
+    return counts;
+  }, [products]);
 
   const aiMoods: { id: AIMood; label: string; icon: string; prompt: string }[] = [
     { id: 'midnight', label: 'Midnight Energy', icon: '🌙', prompt: 'Deep cocoa & dark indulgence' },
@@ -103,9 +111,9 @@ export const ProductCatalogView: React.FC<ProductCatalogViewProps> = ({
   return (
     <div className="space-y-4 pb-12">
       {/* 1. Top Promo Banners Carousel */}
-      <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 pt-1">
+      <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1 pt-1">
         {/* Banner 1 */}
-        <div className="min-w-[285px] sm:min-w-[320px] rounded-3xl bg-[#fff5f7] border border-[#fbcfe8] p-4 relative flex items-center justify-between shadow-2xs">
+        <div className="min-w-[280px] sm:min-w-[320px] rounded-3xl bg-[#fff5f7] border border-[#fbcfe8] p-4 relative flex items-center justify-between shadow-2xs">
           <div className="space-y-1 max-w-[185px]">
             <span className="inline-flex items-center gap-1 text-[9px] font-extrabold tracking-wider text-[#be185d] uppercase">
               <Sparkles className="w-3 h-3 text-[#ec4899]" /> FRESH FROM THE OVEN
@@ -127,7 +135,7 @@ export const ProductCatalogView: React.FC<ProductCatalogViewProps> = ({
         </div>
 
         {/* Banner 2 */}
-        <div className="min-w-[285px] sm:min-w-[320px] rounded-3xl bg-gradient-to-r from-[#fce7f3] to-[#fdf2f8] border border-[#fbcfe8] p-4 relative flex items-center justify-between shadow-2xs">
+        <div className="min-w-[280px] sm:min-w-[320px] rounded-3xl bg-gradient-to-r from-[#fce7f3] to-[#fdf2f8] border border-[#fbcfe8] p-4 relative flex items-center justify-between shadow-2xs">
           <div className="space-y-1 max-w-[185px]">
             <span className="text-[9px] font-extrabold tracking-wider text-[#be185d] uppercase">
               THE COOKIE FLUFFS MENU
@@ -186,6 +194,7 @@ export const ProductCatalogView: React.FC<ProductCatalogViewProps> = ({
                 key={mood.id}
                 id={`ai-mood-${mood.id}`}
                 onClick={() => setSelectedMood(isActive ? 'all' : mood.id)}
+                style={{ borderRadius: '9999px' }}
                 className={`h-8 px-3 rounded-full text-[11px] font-bold whitespace-nowrap transition-all duration-150 flex items-center gap-1.5 cursor-pointer ${
                   isActive
                     ? 'bg-[#523628] text-[#fff5f7] shadow-xs scale-[1.02]'
@@ -233,22 +242,35 @@ export const ProductCatalogView: React.FC<ProductCatalogViewProps> = ({
           )}
         </div>
 
-        {/* Category Horizontal Filter Pills */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4">
+        {/* Category Horizontal Filter Pills with soft bakery capsules */}
+        <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 -mx-1 px-1">
           {categories.map((cat) => {
             const isActive = selectedCategory === cat.id;
+            const count = categoryCounts[cat.id] || 0;
             return (
               <button
                 key={cat.id}
                 id={`filter-category-${cat.id}`}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`h-9 px-4 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-150 flex items-center justify-center cursor-pointer ${
+                style={{ borderRadius: '9999px' }}
+                className={`h-9 px-3.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-200 flex items-center gap-1.5 cursor-pointer shrink-0 select-none shadow-2xs ${
                   isActive
-                    ? 'bg-[#523628] text-[#fff5f7] shadow-xs'
-                    : 'bg-white text-[#4a3024] border border-[#fbcfe8] hover:bg-[#fce7f3]'
+                    ? 'bg-[#523628] text-[#fff5f7] shadow-sm scale-[1.02] ring-2 ring-[#f472b6]/40'
+                    : 'bg-white text-[#523628] border border-[#fbcfe8] hover:bg-[#fce7f3] hover:border-[#f472b6]'
                 }`}
               >
+                <span className="text-xs">{cat.icon}</span>
                 <span>{cat.label}</span>
+                <span
+                  style={{ borderRadius: '9999px' }}
+                  className={`text-[10px] px-1.5 py-0.5 rounded-full font-extrabold ${
+                    isActive
+                      ? 'bg-white/20 text-[#fff5f7]'
+                      : 'bg-[#fce7f3] text-[#be185d]'
+                  }`}
+                >
+                  {count}
+                </span>
               </button>
             );
           })}
@@ -268,8 +290,8 @@ export const ProductCatalogView: React.FC<ProductCatalogViewProps> = ({
         </span>
       </div>
 
-      {/* 5. Cookie Products Stack */}
-      <div className="space-y-4">
+      {/* 5. Cookie Products Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {filteredProducts.map((product) => {
           const isJustAdded = addedEffectId === product.id;
           const isFavorited = !!favorites[product.id];
@@ -280,7 +302,7 @@ export const ProductCatalogView: React.FC<ProductCatalogViewProps> = ({
               key={product.id}
               id={`product-card-${product.id}`}
               onClick={() => setActiveModalProduct(product)}
-              className="bg-white rounded-3xl border border-[#fbcfe8] overflow-hidden shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer"
+              className="bg-white rounded-3xl border border-[#fbcfe8] overflow-hidden shadow-2xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 group cursor-pointer flex flex-col justify-between"
             >
               {/* Card Media Header */}
               <div className="relative h-44 sm:h-52 w-full bg-[#fce7f3] overflow-hidden">

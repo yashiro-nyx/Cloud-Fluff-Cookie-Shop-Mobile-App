@@ -36,6 +36,8 @@ import {
   Signal,
   ArrowLeft,
   Search,
+  LogIn,
+  LogOut,
 } from 'lucide-react';
 import { PageId } from '../types';
 import { CookieLogo } from './CookieLogo';
@@ -46,6 +48,11 @@ interface IonicLayoutProps {
   onToggleMenu: () => void;
   cartCount: number;
   onOpenRecordingGuide?: () => void;
+  sideMenu?: React.ReactNode;
+  isLoggedIn?: boolean;
+  currentUser?: { name: string; email: string; tier: string; initials: string } | null;
+  onOpenAuthModal?: () => void;
+  onLogout?: () => void;
   children: React.ReactNode;
 }
 
@@ -54,6 +61,11 @@ export const IonicLayout: React.FC<IonicLayoutProps> = ({
   onNavigate,
   onToggleMenu,
   cartCount,
+  sideMenu,
+  isLoggedIn,
+  currentUser,
+  onOpenAuthModal,
+  onLogout,
   children,
 }) => {
   const [isDeviceFrame, setIsDeviceFrame] = useState(true);
@@ -98,13 +110,13 @@ export const IonicLayout: React.FC<IonicLayoutProps> = ({
   return (
     <div className="min-h-screen w-full bg-[#fae8eb] text-[#4a3024] flex flex-col items-center justify-start sm:py-6 sm:px-4 select-none">
       {/* External Top Control Bar (Desktop controls) */}
-      <header className="w-full max-w-md mb-3 px-3 hidden sm:flex items-center justify-between text-xs text-[#74513e] font-medium">
+      <header className="w-full max-w-xl mb-3 px-3 hidden sm:flex items-center justify-between text-xs text-[#74513e] font-medium">
         <div className="flex items-center gap-2">
           <CookieLogo size={24} />
           <span className="font-extrabold text-[#523628] tracking-wide">
             COOKIE FLUFFS
           </span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#fce7f3] border border-[#fbcfe8] text-[#be185d] font-bold">
+          <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#fce7f3] border border-[#fbcfe8] text-[#be185d] font-bold">
             Artisan Cookie Shop
           </span>
         </div>
@@ -113,19 +125,29 @@ export const IonicLayout: React.FC<IonicLayoutProps> = ({
           {/* Platform Switcher */}
           <button
             onClick={() => setPlatformMode(platformMode === 'ios' ? 'md' : 'ios')}
-            className="px-2.5 py-1 rounded-lg bg-white/80 hover:bg-white text-[#523628] text-[10px] font-bold transition flex items-center gap-1 border border-[#fbcfe8] cursor-pointer shadow-2xs"
+            className="px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white text-[#523628] text-[11px] font-bold transition flex items-center gap-1.5 border border-[#fbcfe8] cursor-pointer shadow-2xs active:scale-95"
             title="Switch between iOS and Material Design styling"
           >
-            <span>{platformMode === 'ios' ? ' iOS Mode' : '🤖 MD (Android)'}</span>
+            <span>{platformMode === 'ios' ? ' iOS Mode' : '🤖 Android Mode'}</span>
           </button>
 
           {/* Viewport Frame Toggle */}
           <button
             onClick={() => setIsDeviceFrame(!isDeviceFrame)}
-            className="p-1.5 rounded-lg bg-white/80 hover:bg-white text-[#523628] border border-[#fbcfe8] transition cursor-pointer shadow-2xs"
+            className="px-3 py-1.5 rounded-xl bg-white/90 hover:bg-white text-[#523628] border border-[#fbcfe8] transition cursor-pointer shadow-2xs active:scale-95 flex items-center gap-1.5 text-[11px] font-bold"
             title={isDeviceFrame ? 'Switch to Full Screen View' : 'Switch to Phone Chassis'}
           >
-            {isDeviceFrame ? <Maximize2 className="w-4 h-4" /> : <Smartphone className="w-4 h-4" />}
+            {isDeviceFrame ? (
+              <>
+                <Maximize2 className="w-3.5 h-3.5" />
+                <span>Expand View</span>
+              </>
+            ) : (
+              <>
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>Phone Chassis</span>
+              </>
+            )}
           </button>
         </div>
       </header>
@@ -135,103 +157,132 @@ export const IonicLayout: React.FC<IonicLayoutProps> = ({
         id="main-content"
         className={`w-full relative transition-all duration-300 flex flex-col bg-[#fff5f7] overflow-hidden ${
           isDeviceFrame
-            ? 'max-w-[390px] h-[844px] rounded-[44px] border-[10px] border-[#4a3024] phone-shadow sm:my-auto'
-            : 'max-w-xl min-h-screen sm:rounded-3xl sm:border border-[#fbcfe8]'
+            ? 'h-[100dvh] sm:h-[844px] sm:max-h-[92vh] sm:max-w-[410px] sm:rounded-[48px] sm:border-[10px] sm:border-[#3e2418] sm:phone-shadow sm:my-auto'
+            : 'min-h-[100dvh] sm:max-w-2xl sm:min-h-[85vh] sm:rounded-3xl sm:border sm:border-[#fbcfe8] sm:shadow-lg sm:my-auto'
         }`}
       >
-        {/* Phone Status Bar (Emulated iOS / Android Top Notch with matching pink tint) */}
-        <div
-          className={`h-11 bg-[#fff5f7] text-[#4a3024] px-6 flex items-center justify-between text-[11px] font-bold flex-shrink-0 z-30 select-none border-b border-[#fce7f3] ${
-            platformMode === 'ios' ? 'pt-1' : ''
-          }`}
-        >
-          <span>9:41</span>
+        {/* Ionic Side Menu Drawer rendered at top-level chassis */}
+        {sideMenu}
 
-          {/* Dynamic Island Pill (iOS mode) */}
-          {platformMode === 'ios' && (
-            <div className="w-24 h-4 bg-[#523628]/15 rounded-full flex items-center justify-center">
-              <span className="w-2 h-2 rounded-full bg-[#ec4899]/50" />
+        {/* Ionic Header: Contains phone status bar & clean streamlined toolbar */}
+        <IonHeader className="z-30 flex-shrink-0 border-b border-[#fce7f3] bg-[#fff5f7]/95 backdrop-blur-md shadow-2xs">
+          {/* Phone Status Bar (Rendered only on Desktop Chassis Mode) */}
+          {isDeviceFrame && (
+            <div
+              className={`hidden sm:flex h-9 bg-transparent text-[#4a3024] px-6 items-center justify-between text-[11px] font-bold select-none border-b border-[#fce7f3]/60 ${
+                platformMode === 'ios' ? 'pt-1' : ''
+              }`}
+            >
+              <span>9:41</span>
+
+              {/* Dynamic Island Pill (iOS mode) */}
+              {platformMode === 'ios' && (
+                <div className="w-20 h-3.5 bg-[#523628]/15 rounded-full flex items-center justify-center">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#ec4899]/60" />
+                </div>
+              )}
+
+              <div className="flex items-center gap-1.5 opacity-80 text-[#74513e]">
+                <Signal className="w-3 h-3" />
+                <Wifi className="w-3 h-3" />
+                <Battery className="w-4 h-4" />
+              </div>
             </div>
           )}
 
-          <div className="flex items-center gap-1.5 opacity-80 text-[#74513e]">
-            <Signal className="w-3 h-3" />
-            <Wifi className="w-3 h-3" />
-            <Battery className="w-4 h-4" />
-          </div>
-        </div>
-
-        {/* Ionic Header & Toolbar in pink-dominant theme */}
-        <IonHeader className="z-30 flex-shrink-0 border-b border-[#fce7f3] shadow-2xs">
           <IonToolbar
             id="ion-header-toolbar"
-            className="h-14 bg-[#fff5f7]/95 backdrop-blur-md text-[#4a3024] px-3.5 [--background:transparent] [--border-color:transparent] [--color:#4a3024]"
+            className="h-14 bg-transparent text-[#4a3024] [--background:transparent] [--border-color:transparent] [--color:#4a3024] [--padding-start:0] [--padding-end:0]"
           >
-            {/* Left: Ionic Menu Button (ion-menu-button) */}
-            <IonButtons slot="start">
+            {/* Structured Flex Row: mathematically immune to overlapping */}
+            <div className="flex items-center justify-between w-full h-full px-3">
+              {/* Left: Menu Button */}
               <button
                 id="ion-menu-button"
                 onClick={onToggleMenu}
-                className="p-2 rounded-xl text-[#4a3024] hover:bg-[#fce7f3] active:scale-95 transition flex items-center justify-center focus:outline-none cursor-pointer"
+                className="w-10 h-10 rounded-2xl text-[#4a3024] hover:bg-[#fce7f3] active:scale-95 transition flex items-center justify-center focus:outline-none cursor-pointer shrink-0 border border-transparent hover:border-[#fbcfe8]"
                 aria-label="Open Side Menu"
               >
-                <Menu className="w-5 h-5" />
-              </button>
-            </IonButtons>
-
-            {/* Center: Page Title (ion-title) */}
-            <IonTitle
-              className={`px-2 ${
-                platformMode === 'ios' ? 'text-center' : 'text-left pl-2'
-              }`}
-            >
-              <h1 className="text-sm font-bold tracking-tight text-[#4a3024] font-serif truncate">
-                {headerInfo.title}
-              </h1>
-              <p className="text-[10px] text-[#74513e] font-sans font-medium truncate -mt-0.5">
-                {headerInfo.subtitle}
-              </p>
-            </IonTitle>
-
-            {/* Right Actions: Search icon, Cart Badge, and User Profile */}
-            <IonButtons slot="end" className="flex items-center gap-1">
-              <button
-                onClick={() => onNavigate('products')}
-                className="p-2 rounded-xl text-[#4a3024] hover:bg-[#fce7f3] active:scale-95 transition focus:outline-none cursor-pointer"
-                aria-label="Search Cookies"
-                title="Search Cookies"
-              >
-                <Search className="w-5 h-5" />
+                <Menu className="w-5 h-5 text-[#523628]" />
               </button>
 
-              <button
-                id="ion-cart-button"
-                onClick={() => onNavigate('cart')}
-                className="p-2 rounded-xl text-[#4a3024] hover:bg-[#fce7f3] active:scale-95 transition relative focus:outline-none cursor-pointer"
-                aria-label="Open Cookie Box"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                {cartCount > 0 && (
-                  <span
-                    id="cart-badge-counter"
-                    className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#ec4899] text-white text-[9px] font-black flex items-center justify-center shadow-xs"
-                  >
-                    {cartCount}
-                  </span>
+              {/* Center: Simplified, elegant brand / section header */}
+              <div className="flex-1 min-w-0 px-2 text-center">
+                {activePage === 'dashboard' ? (
+                  <div className="flex items-center justify-center gap-1.5">
+                    <span className="text-base font-bold tracking-tight text-[#4a3024] font-serif">
+                      Cookie Fluffs
+                    </span>
+                    <span className="w-2 h-2 rounded-full bg-[#ec4899]" />
+                  </div>
+                ) : (
+                  <>
+                    <h1 className="text-sm font-bold tracking-tight text-[#4a3024] font-serif truncate">
+                      {headerInfo.title}
+                    </h1>
+                    <p className="text-[10px] text-[#be185d] font-sans font-semibold truncate -mt-0.5">
+                      {headerInfo.subtitle}
+                    </p>
+                  </>
                 )}
-              </button>
+              </div>
 
-              {/* Profile Avatar Shortcut */}
-              <button
-                id="btn-navbar-profile"
-                onClick={() => onNavigate('profile')}
-                className="w-8 h-8 rounded-full bg-[#fce7f3] border border-[#fbcfe8] text-[#523628] text-xs font-bold flex items-center justify-center hover:bg-[#fbcfe8] active:scale-95 transition ml-1 cursor-pointer"
-                title="My Account"
-                aria-label="My Account"
-              >
-                JR
-              </button>
-            </IonButtons>
+              {/* Right: Streamlined Actions with Cart & Auth */}
+              <div className="flex items-center gap-1 shrink-0">
+                {/* Shopping Cart Button */}
+                <button
+                  id="ion-cart-button"
+                  onClick={() => onNavigate('cart')}
+                  className="w-9 h-9 rounded-xl text-[#523628] hover:bg-[#fce7f3] active:scale-95 transition relative flex items-center justify-center cursor-pointer border border-transparent hover:border-[#fbcfe8]"
+                  aria-label="Open Cookie Box"
+                  title="Shopping Cart"
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  {cartCount > 0 && (
+                    <span
+                      id="cart-badge-counter"
+                      className="absolute top-1 right-1 w-4 h-4 rounded-full bg-[#ec4899] text-white text-[9px] font-black flex items-center justify-center shadow-xs ring-1 ring-white"
+                    >
+                      {cartCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Login / Logout Controls */}
+                {isLoggedIn ? (
+                  <div className="flex items-center gap-1">
+                    <button
+                      id="btn-navbar-profile"
+                      onClick={() => onNavigate('profile')}
+                      className="w-8 h-8 rounded-full bg-[#fce7f3] border border-[#fbcfe8] text-[#523628] text-xs font-bold flex items-center justify-center hover:bg-[#fbcfe8] active:scale-95 transition cursor-pointer shadow-2xs"
+                      title={`Signed in as ${currentUser?.name || 'User'}`}
+                      aria-label="My Account"
+                    >
+                      {currentUser?.initials || 'JP'}
+                    </button>
+                    <button
+                      id="btn-navbar-logout"
+                      onClick={onLogout}
+                      className="w-8 h-8 rounded-full text-[#74513e] hover:text-rose-600 hover:bg-rose-50 flex items-center justify-center transition cursor-pointer"
+                      title="Log Out"
+                      aria-label="Log Out"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    id="btn-navbar-login"
+                    onClick={onOpenAuthModal}
+                    className="h-8 px-2.5 rounded-full bg-[#523628] text-[#fff5f7] hover:bg-[#684635] text-xs font-bold transition flex items-center gap-1 cursor-pointer shadow-2xs active:scale-95"
+                    title="Log In"
+                  >
+                    <LogIn className="w-3 h-3 text-[#fbcfe8]" />
+                    <span className="text-[11px]">Log In</span>
+                  </button>
+                )}
+              </div>
+            </div>
           </IonToolbar>
         </IonHeader>
 
@@ -240,7 +291,7 @@ export const IonicLayout: React.FC<IonicLayoutProps> = ({
           id="ion-content-scroll"
           className="flex-1 no-scrollbar relative [--background:#fff5f7] [--color:#4a3024]"
         >
-          <div className="p-4">
+          <div className="p-4 sm:p-5">
             {children}
           </div>
         </IonContent>
@@ -248,7 +299,7 @@ export const IonicLayout: React.FC<IonicLayoutProps> = ({
         {/* Ionic Bottom Navigation Bar (ion-tab-bar) */}
         <nav
           id="ion-bottom-tab-bar"
-          className="h-14 bg-white/95 border-t border-[#fce7f3] px-2 flex items-center justify-around z-30 flex-shrink-0 backdrop-blur-md"
+          className="h-16 bg-white/95 border-t border-[#fce7f3] px-2 flex items-center justify-around z-30 flex-shrink-0 backdrop-blur-md shadow-xs"
         >
           {[
             { id: 'dashboard' as PageId, label: 'Home', icon: LayoutDashboard },
@@ -264,18 +315,18 @@ export const IonicLayout: React.FC<IonicLayoutProps> = ({
                 key={tab.id}
                 id={`tab-nav-${tab.id}`}
                 onClick={() => onNavigate(tab.id)}
-                className={`relative flex flex-col items-center justify-center w-14 py-1 rounded-xl transition-all cursor-pointer ${
+                className={`relative flex flex-col items-center justify-center flex-1 max-w-[68px] h-13 py-1 rounded-2xl transition-all cursor-pointer ${
                   isActive
-                    ? 'text-[#523628] font-bold scale-105'
-                    : 'text-[#74513e]/70 hover:text-[#523628]'
+                    ? 'text-[#523628] font-bold'
+                    : 'text-[#74513e]/70 hover:text-[#523628] hover:bg-[#fff5f7]/60'
                 }`}
               >
                 <div
-                  className={`p-1 rounded-lg relative ${
+                  className={`p-1.5 rounded-xl relative transition-all ${
                     tab.highlight && isActive
-                      ? 'bg-[#ec4899] text-white'
+                      ? 'bg-[#523628] text-[#fff5f7] shadow-xs scale-105'
                       : tab.highlight
-                      ? 'bg-[#fce7f3] text-[#ec4899]'
+                      ? 'bg-[#fce7f3] text-[#be185d] border border-[#fbcfe8]'
                       : isActive
                       ? 'bg-[#fce7f3] text-[#523628]'
                       : ''
@@ -283,14 +334,16 @@ export const IonicLayout: React.FC<IonicLayoutProps> = ({
                 >
                   <Icon className="w-4 h-4" />
                   {tab.badge && tab.badge > 0 ? (
-                    <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#ec4899] text-white text-[8px] font-bold flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-[#ec4899] text-white text-[8px] font-bold flex items-center justify-center ring-1 ring-white">
                       {tab.badge}
                     </span>
                   ) : null}
                 </div>
-                <span className="text-[9px] mt-0.5 tracking-tight">{tab.label}</span>
+                <span className="text-[10px] mt-1 tracking-tight leading-none font-semibold">
+                  {tab.label}
+                </span>
                 {isActive && (
-                  <span className="absolute bottom-0 w-4 h-0.5 rounded-full bg-[#ec4899]" />
+                  <span className="absolute bottom-1 w-3.5 h-0.5 rounded-full bg-[#be185d]" />
                 )}
               </button>
             );
@@ -298,8 +351,8 @@ export const IonicLayout: React.FC<IonicLayoutProps> = ({
         </nav>
 
         {/* Emulated Home Bar Indicator (iOS) */}
-        {platformMode === 'ios' && (
-          <div className="h-3.5 bg-white/95 flex items-center justify-center flex-shrink-0">
+        {platformMode === 'ios' && isDeviceFrame && (
+          <div className="hidden sm:flex h-3.5 bg-white/95 items-center justify-center flex-shrink-0">
             <div className="w-28 h-1 bg-[#523628]/20 rounded-full" />
           </div>
         )}
